@@ -1,0 +1,42 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Accounts</h1>
+    <button asp-action="Create" asp-controller="CreateAccount" class="btn btn-primary mb-3">Create Account</button>
+    <table class="table table-responsive table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Account Number</th>
+                <th scope="col">Name</th>
+                <th scope="col">Mobile number</th>
+                <th scope="col">Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(Model.BankAccounts!=null && Model.BankAccounts.Any())
+            {
+            @foreach (var account in Model.BankAccounts)
+            {
+                <tr>
+                    <td>@account.AccountNumber</td>
+                    <td>@account.Name</td>
+                    <td>@account.MobileNo</td>
+                    <td>@account.Balance</td>
+                </tr>
+            }
+            }
+            else
+            {
+            <tr>
+                <td colspan="4">
+                    <div>No accounts available to show.</div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
