@@ -1,8 +1,10 @@
 ﻿using BankingApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BankingApp.API.Controllers
 {
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -24,8 +26,16 @@ namespace BankingApp.API.Controllers
 
                 var createdAcccount = await _accountRepository.CreateAccount(accountObj);
 
+                if (accountObj.DepositAmount > 0)
+                {
+                    BankTransaction transactionObj = new BankTransaction();
+                    transactionObj.AccountId = createdAcccount.AccountId;
+                    transactionObj.Deposit = accountObj.DepositAmount;
+                    SaveTransaction(transactionObj);
+                }
+
                 return CreatedAtAction(nameof(GetBankAccount),
-                    new { id = createdAcccount.AccountNumber }, createdAcccount);
+                    new { id = createdAcccount.AccountId }, createdAcccount);
             }
             catch (Exception)
             {
@@ -55,10 +65,34 @@ namespace BankingApp.API.Controllers
         }
 
         [HttpGet]
-        [Route("GetBankAccount/{accountNumber}")]
-        public ActionResult<List<BankAccount>> GetBankAccount(int accountNumber)
+        [Route("GetBankAccount/{accountId}")]
+        public ActionResult<List<BankAccount>> GetBankAccount(Guid accountId)
         {
-            return Ok(_accountRepository.GetBankAccount(accountNumber));
+            return Ok(_accountRepository.GetBankAccount(accountId));
+        }
+
+        [HttpGet]
+        [Route("GetAllBankAccounts")]
+        public ActionResult<List<BankAccount>> GetAllBankAccounts()
+        {
+            return Ok(_accountRepository.GetAllBankAccounts());
+        }
+
+        [HttpPost]
+        [Route("DeleteAccount")]
+        public ActionResult<BankAccount> DeleteAccount(BankAccount accountObj)
+        {
+            try
+            {
+                _accountRepository.DeleteAccount(accountObj);
+                return StatusCode(StatusCodes.Status200OK,
+                    "Account deleted successfully.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error deleting account");
+            }
         }
     }
 }

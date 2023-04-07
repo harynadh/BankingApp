@@ -7,15 +7,16 @@ using System.Text.Json;
 
 namespace BankingApp.Pages
 {
-    public class CreateAccount : PageModel
+    public class Withdraw : PageModel
     {
-        private readonly ILogger<CreateAccount> _logger;
-        private readonly IConfiguration _config;
+        private readonly ILogger<Withdraw> _logger;
+        private HttpClient _client;
 
-        public CreateAccount(ILogger<CreateAccount> logger, IConfiguration conf)
+        public Withdraw(ILogger<Withdraw> logger)
         {
             _logger = logger;
-            this._config = conf;
+            _client = new HttpClient();
+            _client.BaseAddress = new Uri("http://localhost:5024/api/account/");
         }
 
         public void OnGet()
@@ -31,18 +32,17 @@ namespace BankingApp.Pages
                 {
                     _logger.LogError("Account object sent from client is null.");
                 }
-
-                RestClient client = new RestClient(_config.GetValue<string>("WebAPIUrl"));
-                var request = new RestRequest("CreateAccount");
-                request.Method = Method.Post;
-                request.AddBody(accountObj);
-                var response = client.ExecutePost(request);
-                Response.Redirect("/Index");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
             }
+
+            var client = new RestClient("http://localhost:5024/api/account/");
+            var request = new RestRequest("CreateAccount");
+            request.Method = Method.Post;
+            request.AddBody(accountObj);
+            var response = client.ExecutePost(request);
         }
     }
 }

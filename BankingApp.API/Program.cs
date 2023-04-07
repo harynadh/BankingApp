@@ -1,4 +1,5 @@
 using BankingApp.API;
+using BankingApp.API.Authorization;
 using BankingApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -28,6 +29,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+//app.UseMiddleware<BasicAuthMiddleware>();
 
 app.MapControllers();
 

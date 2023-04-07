@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{handler?}"
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -6,37 +6,77 @@
 
 <div class="text-center">
     <h1 class="display-4">Accounts</h1>
-    <button asp-action="Create" asp-controller="CreateAccount" class="btn btn-primary mb-3">Create Account</button>
-    <table class="table table-responsive table-bordered table-striped table-hover">
+    <table id="tblBankAccounts" class="table table-responsive table-bordered table-striped table-hover">
         <thead>
             <tr>
                 <th scope="col">Account Number</th>
                 <th scope="col">Name</th>
                 <th scope="col">Mobile number</th>
                 <th scope="col">Balance</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
-            @if(Model.BankAccounts!=null && Model.BankAccounts.Any())
+            @if (Model.BankAccounts != null && Model.BankAccounts.Any())
             {
-            @foreach (var account in Model.BankAccounts)
-            {
-                <tr>
-                    <td>@account.AccountNumber</td>
-                    <td>@account.Name</td>
-                    <td>@account.MobileNo</td>
-                    <td>@account.Balance</td>
-                </tr>
-            }
+                @foreach (var account in Model.BankAccounts)
+                {
+                    <tr>
+                        <td id=@account.AccountId>@account.AccountNumber</td>
+                        <td>@account.Name</td>
+                        <td>@account.MobileNo</td>
+                        <td>@account.Balance</td>
+                        <td>
+                            @*<a asp-page="/Deposit" asp-route-AccountId="@account.AccountId">Deposit</a>*@
+                            <button class="btn btn-sm btn-success deposit" data-id="@account.AccountId" data-toggle="modal" data-target="#details-modal">Deposit</button>
+                            <button class="btn btn-sm btn-warning withdraw" data-id="@account.AccountId" data-toggle="modal" data-target="#details-modal">Winthdraw</button>
+                            <button class="btn btn-sm btn-danger delete" data-id="@account.AccountId" data-toggle="modal" data-target="#details-modal">Delete</button>
+                            @*<button class="btn btn-sm btn-dark details" data-id="@account.AccountId" data-toggle="modal" data-target="#details-modal">Deposit</button>*@
+                        </td>
+                    </tr>
+                }
             }
             else
             {
-            <tr>
-                <td colspan="4">
-                    <div>No accounts available to show.</div>
-                </td>
-            </tr>
+                <tr>
+                    <td colspan="4">
+                        <div>No accounts available to show.</div>
+                    </td>
+                </tr>
             }
         </tbody>
     </table>
 </div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="details-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Deposit Form</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('button.deposit').on('click', function () {
+            $('.modal-body').load(`/Index/Account?frm=depst&id=${$(this).data('id')}`);
+            $("#details-modal").modal('show');
+        });
+
+        $('button.withdraw').on('click', function () {
+            $('.modal-body').load(`/Index/Account?frm=wdraw&id=${$(this).data('id')}`);
+            $("#details-modal").modal('show');
+        });
+
+        $('button.delete').on('click', function () {
+            $('.modal-body').load(`/Index/Account?frm=delete&id=${$(this).data('id')}`);
+            $("#details-modal").modal('show');
+        });
+    });
+</script>

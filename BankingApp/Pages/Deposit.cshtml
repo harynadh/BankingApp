@@ -1,0 +1,41 @@
+﻿@page
+@model DepositTransaction
+@{
+    ViewData["Title"] = "Deposit Form";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Deposit Form</h1>
+    <form method="post">
+        <div class="form-group mb-3 row">
+            <label for="AccountNumber" class="col-sm-4 col-form-label">Account Number</label>
+            <div class="col-sm-8">
+                <input type="hidden" readonly name="AccountId" value="@Model.bankAccount.AccountId" />
+                <input type="text" readonly name="AccountNumber" class="form-control" value="@Model.bankAccount.AccountNumber" />
+            </div>
+        </div>
+        <div class="form-group mb-3 row">
+            <label for="Name" class="col-sm-4 col-form-label">Name</label>
+            <div class="col-sm-8">
+                <input type="text" readonly name="Name" class="form-control" value="@Model.bankAccount.Name" />
+            </div>
+        </div>
+        <div class="form-group mb-3 row">
+            <label for="Balance" class="col-sm-4 col-form-label">Balance</label>
+            <div class="col-sm-8">
+                <input type="text" readonly name="Balance" class="form-control" value="@Model.bankAccount.Balance" />
+            </div>
+        </div>
+        <div class="form-group mb-3 row">
+            <label for="Deposit" class="col-sm-4 col-form-label">Deposit Amount</label>
+            <div class="col-sm-6">
+                <input name="AccountTrans[0].Deposit" type="number" class="form-control" placeholder="Deposit Amount" />
+            </div>
+        </div>
+        <div class="form-group mb-3 row">
+            <div class="col-sm-10">
+                <button type="submit" class="btn btn-primary" asp-page-handler="Submit">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
